@@ -23,8 +23,8 @@
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
-    let x = 200; // 四角のX座標
-    let y = 200; // 四角のY座標
+    let x = (canvas.width - size) / 2;  // 400 - 30 = 370 / 2 = 185
+    let y = (canvas.height - size) / 2; // 同じく 185
     const size = 30; // 四角の大きさ
     const speed = 5; // 移動スピード
 
