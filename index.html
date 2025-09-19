@@ -1,10 +1,61 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>初めてのWebページ</title>
-  </head>
-  <body>
-    <h1>こんにちは！</h1>
-    <p>これは僕の最初のWebページです。</p>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <title>Arrow Key Game</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #f0f0f0;
+    }
+    #gameCanvas {
+      border: 2px solid black;
+      background: white;
+      display: block;
+      margin: auto;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="400" height="400"></canvas>
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    let x = 200; // 四角のX座標
+    let y = 200; // 四角のY座標
+    const size = 30; // 四角の大きさ
+    const speed = 5; // 移動スピード
+
+    // キー入力状態を保存する
+    const keys = {};
+
+    document.addEventListener("keydown", (e) => {
+      keys[e.key] = true;
+    });
+    document.addEventListener("keyup", (e) => {
+      keys[e.key] = false;
+    });
+
+    function gameLoop() {
+      // 背景をクリア
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // 矢印キーで移動
+      if (keys["ArrowUp"]) y -= speed;
+      if (keys["ArrowDown"]) y += speed;
+      if (keys["ArrowLeft"]) x -= speed;
+      if (keys["ArrowRight"]) x += speed;
+
+      // 四角を描く
+      ctx.fillStyle = "red";
+      ctx.fillRect(x, y, size, size);
+
+      requestAnimationFrame(gameLoop);
+    }
+
+    gameLoop();
+  </script>
+</body>
 </html>
