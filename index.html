@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>カード選択バトル</title>
+  <title>カードバトル vs CPU</title>
   <style>
     body { text-align: center; font-family: sans-serif; margin-top: 40px; }
     .card {
@@ -12,56 +12,71 @@
       line-height: 120px;
       border: 2px solid #333;
       border-radius: 10px;
-      margin: 10px;
+      margin: 8px;
       font-size: 32px;
       cursor: pointer;
       transition: 0.2s;
       user-select: none;
     }
-    .card:hover {
-      background-color: #f0f0f0;
-      transform: scale(1.1);
-    }
-    .selected {
-      background-color: #ffda79;
-      border-color: #ff8c00;
+    .card:hover { background-color: #f0f0f0; transform: scale(1.1); }
+    .selected { background-color: #ffda79; border-color: #ff8c00; }
+    #cpuCard {
+      font-size: 36px;
+      margin-top: 20px;
     }
     #result {
-      font-size: 24px;
+      font-size: 28px;
       margin-top: 20px;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <h1>カードを選ぼう！</h1>
+  <h1>カードバトル vs CPU</h1>
+  <h2>カードを選んでクリック！</h2>
+
   <div id="cardArea"></div>
-  <div id="result">選択中のカード: なし</div>
+
+  <div id="cpuCard">CPUのカード: ？</div>
+  <div id="result">勝負の結果がここに表示されます</div>
 
   <script>
-    // カードのリスト（今回は1〜5）
-    const cards = [1, 2, 3, 4, 5];
+    // カードのリスト（1〜8）
+    const cards = [1, 2, 3, 4, 5, 6, 7, 8];
     const cardArea = document.getElementById("cardArea");
-    const result = document.getElementById("result");
-    let selectedCard = null;
+    const cpuCardText = document.getElementById("cpuCard");
+    const resultText = document.getElementById("result");
 
-    // カードを画面に並べる
+    // カードを表示
     cards.forEach(num => {
       const div = document.createElement("div");
       div.className = "card";
       div.textContent = num;
-      div.addEventListener("click", () => selectCard(num, div));
+      div.addEventListener("click", () => play(num, div));
       cardArea.appendChild(div);
     });
 
-    // カードを選択したとき
-    function selectCard(num, element) {
-      // すでに選ばれていたカードの色を戻す
+    // プレイヤーがカードを選ぶと勝負！
+    function play(playerNum, element) {
+      // 選択したカードを強調
       document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
-
-      // 新しいカードを選択
       element.classList.add("selected");
-      selectedCard = num;
-      result.textContent = `選択中のカード: ${num}`;
+
+      // CPUのカードをランダムで決定
+      const cpuNum = cards[Math.floor(Math.random() * cards.length)];
+      cpuCardText.textContent = `CPUのカード: ${cpuNum}`;
+
+      // 勝敗判定
+      if (playerNum > cpuNum) {
+        resultText.textContent = "YOU WIN";
+        resultText.style.color = "green";
+      } else if (playerNum < cpuNum) {
+        resultText.textContent = "YOU LOSE";
+        resultText.style.color = "red";
+      } else {
+        resultText.textContent = "DRAW";
+        resultText.style.color = "gray";
+      }
     }
   </script>
 </body>
