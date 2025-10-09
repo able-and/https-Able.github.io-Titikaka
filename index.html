@@ -1,37 +1,67 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <title>カードバトル</title>
+  <meta charset="UTF-8">
+  <title>カード選択バトル</title>
   <style>
-    body { text-align: center; font-family: sans-serif; margin-top: 50px; }
-    .card { font-size: 40px; padding: 20px; border: 2px solid #000; margin: 10px; display: inline-block; width: 100px; }
-    button { padding: 10px 20px; font-size: 18px; }
+    body { text-align: center; font-family: sans-serif; margin-top: 40px; }
+    .card {
+      display: inline-block;
+      width: 80px;
+      height: 120px;
+      line-height: 120px;
+      border: 2px solid #333;
+      border-radius: 10px;
+      margin: 10px;
+      font-size: 32px;
+      cursor: pointer;
+      transition: 0.2s;
+      user-select: none;
+    }
+    .card:hover {
+      background-color: #f0f0f0;
+      transform: scale(1.1);
+    }
+    .selected {
+      background-color: #ffda79;
+      border-color: #ff8c00;
+    }
+    #result {
+      font-size: 24px;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
-  <h1>カードバトルゲーム</h1>
-  <div id="playerCard" class="card">?</div>
-  <div id="cpuCard" class="card">?</div>
-  <br />
-  <button onclick="play()">カードを出す！</button>
-  <h2 id="result"></h2>
+  <h1>カードを選ぼう！</h1>
+  <div id="cardArea"></div>
+  <div id="result">選択中のカード: なし</div>
 
   <script>
-    function play() {
-      const player = Math.floor(Math.random() * 13) + 1;
-      const cpu = Math.floor(Math.random() * 13) + 1;
+    // カードのリスト（今回は1〜5）
+    const cards = [1, 2, 3, 4, 5];
+    const cardArea = document.getElementById("cardArea");
+    const result = document.getElementById("result");
+    let selectedCard = null;
 
-      document.getElementById("playerCard").textContent = player;
-      document.getElementById("cpuCard").textContent = cpu;
+    // カードを画面に並べる
+    cards.forEach(num => {
+      const div = document.createElement("div");
+      div.className = "card";
+      div.textContent = num;
+      div.addEventListener("click", () => selectCard(num, div));
+      cardArea.appendChild(div);
+    });
 
-      if (player > cpu) {
-        document.getElementById("result").textContent = "あなたの勝ち！🎉";
-      } else if (player < cpu) {
-        document.getElementById("result").textContent = "CPUの勝ち💀";
-      } else {
-        document.getElementById("result").textContent = "引き分け！🤝";
-      }
+    // カードを選択したとき
+    function selectCard(num, element) {
+      // すでに選ばれていたカードの色を戻す
+      document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
+
+      // 新しいカードを選択
+      element.classList.add("selected");
+      selectedCard = num;
+      result.textContent = `選択中のカード: ${num}`;
     }
   </script>
 </body>
