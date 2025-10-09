@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>カードバトル vs CPU</title>
+  <title>カードバトル vs CPU（偶奇ルール）</title>
   <style>
     body { text-align: center; font-family: sans-serif; margin-top: 40px; }
     .card {
@@ -20,34 +20,40 @@
     }
     .card:hover { background-color: #f0f0f0; transform: scale(1.1); }
     .selected { background-color: #ffda79; border-color: #ff8c00; }
-    #cpuCard {
-      font-size: 36px;
-      margin-top: 20px;
-    }
-    #result {
-      font-size: 28px;
-      margin-top: 20px;
-      font-weight: bold;
-    }
+    #cpuCard { font-size: 36px; margin-top: 20px; }
+    #result { font-size: 28px; margin-top: 20px; font-weight: bold; }
+    #scoreBoard { margin-top: 30px; font-size: 20px; }
+    button { margin-top: 20px; padding: 8px 20px; font-size: 18px; cursor: pointer; }
   </style>
 </head>
 <body>
   <h1>カードバトル vs CPU</h1>
-  <h2>カードを選んでクリック！</h2>
+  <h2>カードを選んでクリック！先に4ポイント獲得した方が勝ち</h2>
 
   <div id="cardArea"></div>
 
   <div id="cpuCard">CPUのカード: ？</div>
   <div id="result">勝負の結果がここに表示されます</div>
 
+  <div id="scoreBoard">
+    🏆 あなた: <span id="playerScore">0</span>　
+    💀 CPU: <span id="cpuScore">0</span>
+  </div>
+
+  <button id="resetBtn">スコアをリセット</button>
+
   <script>
-    // カードのリスト（1〜8）
-    const cards = [1, 2, 3, 4, 5, 6, 7, 8];
+    const cards = [1,2,3,4,5,6,7,8];
     const cardArea = document.getElementById("cardArea");
     const cpuCardText = document.getElementById("cpuCard");
     const resultText = document.getElementById("result");
+    const playerScoreEl = document.getElementById("playerScore");
+    const cpuScoreEl = document.getElementById("cpuScore");
 
-    // カードを表示
+    let playerScore = 0;
+    let cpuScore = 0;
+
+    // カード表示
     cards.forEach(num => {
       const div = document.createElement("div");
       div.className = "card";
@@ -56,28 +62,65 @@
       cardArea.appendChild(div);
     });
 
-    // プレイヤーがカードを選ぶと勝負！
     function play(playerNum, element) {
-      // 選択したカードを強調
+      // 選択ハイライト
       document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
       element.classList.add("selected");
 
-      // CPUのカードをランダムで決定
+      // CPUランダムカード
       const cpuNum = cards[Math.floor(Math.random() * cards.length)];
       cpuCardText.textContent = `CPUのカード: ${cpuNum}`;
 
       // 勝敗判定
-      if (playerNum > cpuNum) {
-        resultText.textContent = "YOU WIN";
+      let winner = "";
+      if ((playerNum % 2 === cpuNum % 2)) {
+        // 偶数:偶数 or 奇数:奇数 → 大きい方勝利
+        winner = (playerNum > cpuNum) ? "player" : (playerNum < cpuNum) ? "cpu" : "draw";
+      } else {
+        // 偶数:奇数 or 奇数:偶数 → 小さい方勝利
+        winner = (playerNum < cpuNum) ? "player" : (playerNum > cpuNum) ? "cpu" : "draw";
+      }
+
+      // スコア加算＆結果表示
+      if (winner === "player") {
+        playerScore++;
+        resultText.textContent = "🎉 あなたの勝ち！";
         resultText.style.color = "green";
-      } else if (playerNum < cpuNum) {
-        resultText.textContent = "YOU LOSE";
+      } else if (winner === "cpu") {
+        cpuScore++;
+        resultText.textContent = "💀 CPUの勝ち...";
         resultText.style.color = "red";
       } else {
-        resultText.textContent = "DRAW";
+        resultText.textContent = "🤝 引き分け！";
         resultText.style.color = "gray";
       }
+
+      // スコア表示更新
+      playerScoreEl.textContent = playerScore;
+      cpuScoreEl.textContent = cpuScore;
+
+      // 4ポイント到達でゲーム終了
+      if (playerScore >= 4) {
+        alert("🎉 あなたの勝利！ゲーム終了");
+        resetGame();
+      } else if (cpuScore >= 4) {
+        alert("💀 CPUの勝利...ゲーム終了");
+        resetGame();
+      }
     }
+
+    function resetGame() {
+      playerScore = 0;
+      cpuScore = 0;
+      playerScoreEl.textContent = 0;
+      cpuScoreEl.textContent = 0;
+      cpuCardText.textContent = "CPUのカード: ？";
+      resultText.textContent = "勝負の結果がここに表示されます";
+      resultText.style.color = "black";
+      document.querySelectorAll(".card").forEach(c => c.classList.remove("selected"));
+    }
+
+    document.getElementById("resetBtn").addEventListener("click", resetGame);
   </script>
 </body>
 </html>
