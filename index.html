@@ -1,61 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>Arrow Key Game</title>
+  <meta charset="UTF-8" />
+  <title>カードバトル</title>
   <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background: #f0f0f0;
-    }
-    #gameCanvas {
-      border: 2px solid black;
-      background: white;
-      display: block;
-      margin: auto;
-    }
+    body { text-align: center; font-family: sans-serif; margin-top: 50px; }
+    .card { font-size: 40px; padding: 20px; border: 2px solid #000; margin: 10px; display: inline-block; width: 100px; }
+    button { padding: 10px 20px; font-size: 18px; }
   </style>
 </head>
 <body>
-  <canvas id="gameCanvas" width="400" height="400"></canvas>
+  <h1>カードバトルゲーム</h1>
+  <div id="playerCard" class="card">?</div>
+  <div id="cpuCard" class="card">?</div>
+  <br />
+  <button onclick="play()">カードを出す！</button>
+  <h2 id="result"></h2>
+
   <script>
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
+    function play() {
+      const player = Math.floor(Math.random() * 13) + 1;
+      const cpu = Math.floor(Math.random() * 13) + 1;
 
-    let x = (canvas.width - size) / 2;  // 400 - 30 = 370 / 2 = 185
-    let y = (canvas.height - size) / 2; // 同じく 185
-    const size = 30; // 四角の大きさ
-    const speed = 5; // 移動スピード
+      document.getElementById("playerCard").textContent = player;
+      document.getElementById("cpuCard").textContent = cpu;
 
-    // キー入力状態を保存する
-    const keys = {};
-
-    document.addEventListener("keydown", (e) => {
-      keys[e.key] = true;
-    });
-    document.addEventListener("keyup", (e) => {
-      keys[e.key] = false;
-    });
-
-    function gameLoop() {
-      // 背景をクリア
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      // 矢印キーで移動
-      if (keys["ArrowUp"]) y -= speed;
-      if (keys["ArrowDown"]) y += speed;
-      if (keys["ArrowLeft"]) x -= speed;
-      if (keys["ArrowRight"]) x += speed;
-
-      // 四角を描く
-      ctx.fillStyle = "red";
-      ctx.fillRect(x, y, size, size);
-
-      requestAnimationFrame(gameLoop);
+      if (player > cpu) {
+        document.getElementById("result").textContent = "あなたの勝ち！🎉";
+      } else if (player < cpu) {
+        document.getElementById("result").textContent = "CPUの勝ち💀";
+      } else {
+        document.getElementById("result").textContent = "引き分け！🤝";
+      }
     }
-
-    gameLoop();
   </script>
 </body>
 </html>
